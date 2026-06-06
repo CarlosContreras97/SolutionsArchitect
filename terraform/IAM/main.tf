@@ -58,15 +58,3 @@ data "aws_iam_policy_document" "admin_policy_non_specific"{
       resources = ["*"]
     }
 }
-
-# setup aws budget
-resource "aws_budgets_budget" "a_dollar_budget"{
-    name = "1 dollar spend"
-    budget_type = "COST"
-    limit_amount = "1"
-    limit_unit = "USD"
-    time_period_start = "2026-05-29_00:00"
-    time_period_end =   "2030-01-01_00:00"
-    time_unit = "MONTHLY"    
-}
-
