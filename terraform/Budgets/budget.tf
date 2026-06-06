@@ -1,4 +1,4 @@
-data "aws_iam_policy_document" "service_role_policy"{
+data "aws_iam_policy_document" "ec2_service_policy"{
     statement {
         sid = "1"
         effect = "Allow"
@@ -36,9 +36,9 @@ data "aws_iam_policy_document" "deny_ec2_run"{
     }
 }
 
-resource "aws_iam_policy" "service_role" {
-  name = "EC2ServiceRole"
-  policy = data.aws_iam_policy_document.service_role_policy.json  
+resource "aws_iam_policy" "service_policy" {
+  name = "EC2ServicePolicy"
+  policy = data.aws_iam_policy_document.ec2_service_policy.json
 }
 
 resource "aws_iam_role" "execution_role"{
@@ -71,7 +71,7 @@ resource "aws_budgets_budget" "ec2"{
     threshold                  = 80
     threshold_type             = "PERCENTAGE"
     notification_type          = "FORECASTED"
-   subscriber_email_addresses = ["${var.email}"]
+   subscriber_email_addresses = [var.email]
   }
 }
 
@@ -89,12 +89,12 @@ resource "aws_budgets_budget_action" "deny_ec2"{
     definition {
       iam_action_definition {
         policy_arn = aws_iam_policy.deny_ec2_run_policy.arn
-        roles = ["aws_iam_policy.service_role"]
+        roles = ["aws_iam_policy.service_policy.name"]
       }
     }
 
     subscriber {
-      address = "${var.email}"
+      address = var.email
       subscription_type = "EMAIL"
     }
 
